@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/supabaseClient";
+import { SearchHistory, UserProfile } from "@/api/entities";
 import { Search, MapPin, Loader2, RefreshCw } from "lucide-react";
 
 export default function SearchPage() {
@@ -18,7 +19,7 @@ export default function SearchPage() {
     const params = new URLSearchParams(window.location.search);
     const d = params.get("dish");
     if (d) setDish(d);
-    base44.entities.UserProfile.list("-created_date", 1).then(p => setProfile(p[0] || null)).catch(() => {});
+    UserProfile.list().then(p => setProfile(p[0] || null)).catch(() => {});
     detectLocation();
   }, []);
 
@@ -52,17 +53,53 @@ export default function SearchPage() {
     setSearching(true);
     setError("");
     try {
-      const res = await base44.functions.invoke("searchRestaurants", {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      const response = await fetch(
+        "https://dmttwtuubhadvsqpnncx.supabase.co/functions/v1/searchRestaurants",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            dish,
+            latitude: (location?.lat && !isNaN(location.lat)) ? location.lat : null,
+            longitude: (location?.lng && !isNaN(location.lng)) ? location.lng : null,
+            radius_miles: radius,
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Search failed");
+      const data = await response.json();
+      const results = data?.results || [];
+
+      SearchHistory.create({
         dish,
-        latitude: (location?.lat && !isNaN(location.lat)) ? location.lat : null,
-        longitude: (location?.lng && !isNaN(location.lng)) ? location.lng : null,
+        location_lat: location?.lat || null,
+        location_lng: location?.lng || null,
+        location_name: locationName,
         radius_miles: radius,
+        result_count: results.length
+      }).catch(() => {});
+
+      if (profile) {
+        UserProfile.update(profile.id, {
+          searches_used: (profile.searches_used || 0) + 1
+        }).catch(() => {});
+      }
+
+      const params = new URLSearchParams({
+        dish,
+        radius: radius.toString(),
+        lat: location?.lat?.toString() || "",
+        lng: location?.lng?.toString() || "",
+        location: locationName
       });
-      const results = res.data?.results || [];
-      base44.entities.SearchHistory.create({ dish, location_lat: location?.lat || null, location_lng: location?.lng || null, location_name: locationName, radius_miles: radius, result_count: results.length }).catch(() => {});
-      if (profile) base44.entities.UserProfile.update(profile.id, { searches_used: (profile.searches_used || 0) + 1 }).catch(() => {});
-      const params = new URLSearchParams({ dish, radius: radius.toString(), lat: location?.lat?.toString() || "", lng: location?.lng?.toString() || "", location: locationName });
-      navigate(`/results?${params.toString()}`, { state: { results, mock: res.data?.mock } });
+      navigate(`/results?${params.toString()}`, { state: { results, mock: data?.mock } });
+
     } catch (err) {
       setError(err.message || "Search failed. Please try again.");
     } finally {
@@ -76,8 +113,6 @@ export default function SearchPage() {
       <p className="text-muted-foreground text-sm mb-7">
         Search for restaurants serving your favourite<br />dishes
       </p>
-
-      {/* Dish input */}
       <div className="mb-2">
         <label className="block text-sm font-medium text-foreground mb-2">
           What dish are you craving?
@@ -95,31 +130,20 @@ export default function SearchPage() {
         </div>
         {error && <p className="text-destructive text-xs mt-1">{error}</p>}
       </div>
-
-      {/* Radius Slider */}
       <div className="mb-5 mt-5">
         <div className="flex items-center justify-between mb-3">
           <label className="text-sm font-medium text-foreground">Search Radius</label>
           <span className="text-sm font-bold text-primary">{radius.toFixed(1)} miles</span>
         </div>
-        <div className="relative">
-          <input
-            type="range"
-            min={1}
-            max={25}
-            step={0.5}
-            value={radius}
-            onChange={e => setRadius(Number(e.target.value))}
-            className="w-full h-1.5 rounded-full appearance-none cursor-pointer accent-primary bg-border"
-          />
-        </div>
+        <input
+          type="range" min={1} max={25} step={0.5} value={radius}
+          onChange={e => setRadius(Number(e.target.value))}
+          className="w-full h-1.5 rounded-full appearance-none cursor-pointer accent-primary bg-border"
+        />
         <div className="flex justify-between text-xs text-muted-foreground mt-1.5">
-          <span>1 mi</span>
-          <span>25 mi</span>
+          <span>1 mi</span><span>25 mi</span>
         </div>
       </div>
-
-      {/* Location */}
       <div className="mb-7">
         <div className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-3.5">
           <MapPin className="w-4 h-4 text-primary shrink-0" />
@@ -129,13 +153,10 @@ export default function SearchPage() {
           <button onClick={detectLocation} disabled={locating} className="shrink-0">
             {locating
               ? <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
-              : <RefreshCw className="w-4 h-4 text-muted-foreground hover:text-primary transition-colors" />
-            }
+              : <RefreshCw className="w-4 h-4 text-muted-foreground hover:text-primary transition-colors" />}
           </button>
         </div>
       </div>
-
-      {/* Search button */}
       <button
         onClick={handleSearch}
         disabled={searching || !dish.trim()}
@@ -144,8 +165,6 @@ export default function SearchPage() {
         {searching ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
         {searching ? "Searching..." : "Search Restaurants"}
       </button>
-
-      {/* Footer note */}
       <p className="text-center text-muted-foreground text-xs mt-8">DishFinder © 2025. All Rights Reserved.</p>
     </div>
   );
