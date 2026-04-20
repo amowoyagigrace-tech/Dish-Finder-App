@@ -1,19 +1,23 @@
-import Dashboard from './pages/Dashboard';
-import Boards from './pages/Boards';
-import Board from './pages/Board';
-import Analytics from './pages/Analytics';
-import __Layout from './Layout.jsx';
+/**
+ * Page registry for NavigationTracker (Base44 app logs).
+ * Keys must match the first URL path segment (case-insensitive); "/" uses mainPage.
+ * No React imports — avoids bundling unused template pages that reference missing @/entities/*.
+ */
+const PAGE_KEYS = [
+  "Landing",
+  "Subscription",
+  "Results",
+  "Terms",
+  "Privacy",
+  "Home",
+  "Search",
+  "Favourites",
+  "Profile",
+];
 
-
-export const PAGES = {
-    "Dashboard": Dashboard,
-    "Boards": Boards,
-    "Board": Board,
-    "Analytics": Analytics,
-}
+export const PAGES = Object.fromEntries(PAGE_KEYS.map((k) => [k, null]));
 
 export const pagesConfig = {
-    mainPage: "Dashboard",
-    Pages: PAGES,
-    Layout: __Layout,
+  mainPage: "Landing",
+  Pages: PAGES,
 };
