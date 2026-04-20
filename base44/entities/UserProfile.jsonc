@@ -1,0 +1,56 @@
+{
+  "name": "UserProfile",
+  "type": "object",
+  "properties": {
+    "subscription_tier": {
+      "type": "string",
+      "enum": [
+        "free",
+        "monthly",
+        "annual"
+      ],
+      "default": "free",
+      "description": "User's subscription tier"
+    },
+    "searches_used": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of searches used this period"
+    },
+    "subscription_expires": {
+      "type": "string",
+      "format": "date",
+      "description": "When the subscription expires"
+    },
+    "preferred_cuisines": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "User's preferred cuisine types"
+    },
+    "dietary_preference": {
+      "type": "string",
+      "enum": [
+        "none",
+        "vegetarian",
+        "vegan",
+        "halal",
+        "gluten-free"
+      ],
+      "default": "none",
+      "description": "Dietary preference"
+    },
+    "default_radius": {
+      "type": "number",
+      "default": 5,
+      "description": "Default search radius in miles"
+    },
+    "location_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether location is enabled"
+    }
+  },
+  "required": []
+}

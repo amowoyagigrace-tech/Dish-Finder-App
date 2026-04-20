@@ -1,0 +1,44 @@
+{
+  "name": "Favourite",
+  "type": "object",
+  "properties": {
+    "place_id": {
+      "type": "string",
+      "description": "Google Places ID"
+    },
+    "name": {
+      "type": "string",
+      "description": "Restaurant name"
+    },
+    "address": {
+      "type": "string",
+      "description": "Restaurant address"
+    },
+    "rating": {
+      "type": "number",
+      "description": "Restaurant rating"
+    },
+    "price_level": {
+      "type": "number",
+      "description": "Price level 1-4"
+    },
+    "photo_url": {
+      "type": "string",
+      "description": "Photo URL"
+    },
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    },
+    "dish_searched": {
+      "type": "string",
+      "description": "The dish that was searched when this was saved"
+    }
+  },
+  "required": [
+    "place_id",
+    "name"
+  ]
+}

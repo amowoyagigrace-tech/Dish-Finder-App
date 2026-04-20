@@ -1,0 +1,33 @@
+{
+  "name": "SearchHistory",
+  "type": "object",
+  "properties": {
+    "dish": {
+      "type": "string",
+      "description": "Dish that was searched"
+    },
+    "location_lat": {
+      "type": "number",
+      "description": "Latitude of search location"
+    },
+    "location_lng": {
+      "type": "number",
+      "description": "Longitude of search location"
+    },
+    "location_name": {
+      "type": "string",
+      "description": "Human-readable location"
+    },
+    "radius_miles": {
+      "type": "number",
+      "description": "Search radius in miles"
+    },
+    "result_count": {
+      "type": "number",
+      "description": "Number of results returned"
+    }
+  },
+  "required": [
+    "dish"
+  ]
+}

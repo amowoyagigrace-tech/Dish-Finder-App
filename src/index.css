@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 16% 20%;
+    --foreground: 0 0% 100%;
+    --card: 222 16% 24%;
+    --card-foreground: 0 0% 100%;
+    --popover: 222 16% 24%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 38 30% 75%;
+    --primary-foreground: 222 16% 20%;
+    --secondary: 222 16% 28%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 222 16% 28%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 38 30% 75%;
+    --accent-foreground: 222 16% 20%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 222 16% 32%;
+    --input: 222 16% 28%;
+    --ring: 38 30% 75%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222 16% 20%;
+    --foreground: 0 0% 100%;
+    --card: 222 16% 24%;
+    --card-foreground: 0 0% 100%;
+    --popover: 222 16% 24%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 38 30% 75%;
+    --primary-foreground: 222 16% 20%;
+    --secondary: 222 16% 28%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 222 16% 28%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 38 30% 75%;
+    --accent-foreground: 222 16% 20%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 222 16% 32%;
+    --input: 222 16% 28%;
+    --ring: 38 30% 75%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-inter;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
