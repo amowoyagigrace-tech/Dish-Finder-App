@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-
-const LANDING_BG = "https://media.base44.com/images/public/69e0eec242e930d931f8bf09/b3983095a_landing-bg.jpg";
+const LANDING_BG = "";
 
 // Logo icon — stylised "D" with fork
 function DishFinderLogo({ size = 72 }) {

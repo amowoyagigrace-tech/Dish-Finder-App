@@ -1,2 +1,3 @@
 import { supabase } from '../supabaseClient';
-export { supabase as base44 };
+export { supabase };
+export const base44 = supabase;
