@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { Favourite } from "@/api/entities";
 import { Heart, MapPin, Star, Trash2, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -8,14 +8,14 @@ export default function Favourites() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    base44.entities.Favourite.list("-created_date")
+    Favourite.list()
       .then(favs => setFavourites(favs))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
   const remove = async (id) => {
-    await base44.entities.Favourite.delete(id);
+    await Favourite.delete(id);
     setFavourites(prev => prev.filter(f => f.id !== id));
   };
 
